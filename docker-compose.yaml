@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  
+  async1:
+    image: python:3.8-alpine
+    container_name: app
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:8000"
+    command: sh -c 
+            "
+            cd /app &&
+            python -m pip install -r requirements.txt &&
+            cd app &&
+            python main.py
+            "
