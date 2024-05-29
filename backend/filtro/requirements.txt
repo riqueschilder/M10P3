@@ -1,0 +1,4 @@
+Flask
+Pillow
+psycopg2-binary
+requests

@@ -1,18 +1,55 @@
-version: '3.8'
-
 services:
-  
-  async1:
-    image: python:3.8-alpine
-    container_name: app
-    volumes:
-      - ./:/app
+  db:
+    build:
+      context: ./backend/db
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
     ports:
-      - "8000:8000"
-    command: sh -c 
-            "
-            cd /app &&
-            python -m pip install -r requirements.txt &&
-            cd app &&
-            python main.py
-            "
+      - "5432:5432"
+
+  backend_auth:
+    build:
+      context: ./backend/app
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+  filtro_app:
+    build:
+      context: ./backend/filtro
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5001:5001"
+
+  log:
+    build:
+      context: ./backend/log
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "5002:5002"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+ 
+  gateway:
+    build: ./gateway
+    restart: always
+    ports:
+      - "8000:80"
+    depends_on:
+      - backend_auth
+      - filtro_app
