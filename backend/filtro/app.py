@@ -44,7 +44,7 @@ def log_to_api(level, message, logger_name):
             'message': message,
             'logger_name': logger_name
         }
-        requests.post('http://172.17.0.1:8000/log', json=data)
+        requests.post('http://10.150.8.26:8000/log', json=data)
     except Exception as e:
         logger.error(f'Failed to send log to API: {str(e)}')
 
